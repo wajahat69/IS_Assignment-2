@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+     <title>Encryption Tool</title>
+
+     <style>
+          body {
+               font-family: Arial;
+               padding: 40px;
+          }
+
+          textarea,
+          select,
+          input,
+          button {
+               width: 100%;
+               margin-top: 10px;
+               padding: 10px;
+          }
+
+          button {
+               background: blue;
+               color: white;
+               border: none;
+          }
+     </style>
+</head>
+
+<body>
+
+     <h2>🔐 Encryption Tool</h2>
+
+     <textarea id="text" placeholder="Enter text"></textarea>
+
+     <select id="algo">
+          <option value="">Select</option>
+          <option value="caesar">Caesar</option>
+          <option value="aes">AES</option>
+          <option value="base64">Base64</option>
+     </select>
+
+     <input id="key" placeholder="Enter key (AES only)">
+
+     <button onclick="encrypt()">Encrypt</button>
+
+     <textarea id="output" readonly></textarea>
+
+     <script>
+          async function encrypt() {
+               let text = document.getElementById("text").value;
+               let algorithm = document.getElementById("algo").value;
+               let key = document.getElementById("key").value;
+
+               if (!text || !algorithm) {
+                    alert("Fill all fields");
+                    return;
+               }
+
+               const res = await fetch("http://localhost:5000/encrypt", {
+                    method: "POST",
+                    headers: {
+                         "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text, algorithm, key })
+               });
+
+               const data = await res.json();
+
+               if (data.error) {
+                    alert(data.error);
+               } else {
+                    document.getElementById("output").value = data.ciphertext;
+               }
+          }
+     </script>
+
+</body>
+
+</html>
